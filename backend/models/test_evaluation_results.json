@@ -1,0 +1,84 @@
+{
+    "detection_efficientnet": {
+        "accuracy": 0.9834,
+        "precision": 0.9917,
+        "recall": 0.9876,
+        "f1": 0.9896,
+        "fn": 12,
+        "confusion_matrix": [
+            [
+                235,
+                8
+            ],
+            [
+                12,
+                952
+            ]
+        ]
+    },
+    "detection_resnet101": {
+        "accuracy": 0.9693,
+        "precision": 0.9764,
+        "recall": 0.9855,
+        "f1": 0.9809,
+        "fn": 14,
+        "confusion_matrix": [
+            [
+                220,
+                23
+            ],
+            [
+                14,
+                950
+            ]
+        ]
+    },
+    "classification_resnet101": {
+        "accuracy": 0.972,
+        "precision": 0.9699,
+        "recall": 0.9735,
+        "f1": 0.9714,
+        "fn": null,
+        "confusion_matrix": [
+            [
+                360,
+                14,
+                4
+            ],
+            [
+                2,
+                266,
+                5
+            ],
+            [
+                0,
+                2,
+                311
+            ]
+        ]
+    },
+    "classification_efficientnet": {
+        "accuracy": 0.9492,
+        "precision": 0.9545,
+        "recall": 0.9454,
+        "f1": 0.9491,
+        "fn": null,
+        "confusion_matrix": [
+            [
+                370,
+                8,
+                0
+            ],
+            [
+                20,
+                248,
+                5
+            ],
+            [
+                16,
+                0,
+                297
+            ]
+        ]
+    }
+}

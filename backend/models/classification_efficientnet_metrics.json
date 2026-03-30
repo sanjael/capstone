@@ -1,0 +1,122 @@
+[
+    {
+        "epoch": 1,
+        "loss": 0.611316,
+        "f1": 0.85072,
+        "precision": 0.862632,
+        "recall": 0.84603,
+        "accuracy": 0.851506
+    },
+    {
+        "epoch": 2,
+        "loss": 0.441204,
+        "f1": 0.913314,
+        "precision": 0.921455,
+        "recall": 0.908494,
+        "accuracy": 0.914849
+    },
+    {
+        "epoch": 3,
+        "loss": 0.388486,
+        "f1": 0.922124,
+        "precision": 0.93034,
+        "recall": 0.917227,
+        "accuracy": 0.923157
+    },
+    {
+        "epoch": 4,
+        "loss": 0.343176,
+        "f1": 0.926657,
+        "precision": 0.92891,
+        "recall": 0.924855,
+        "accuracy": 0.92731
+    },
+    {
+        "epoch": 5,
+        "loss": 0.324814,
+        "f1": 0.915203,
+        "precision": 0.919683,
+        "recall": 0.912128,
+        "accuracy": 0.916926
+    },
+    {
+        "epoch": 6,
+        "loss": 0.283565,
+        "f1": 0.930015,
+        "precision": 0.941102,
+        "recall": 0.924063,
+        "accuracy": 0.931464
+    },
+    {
+        "epoch": 7,
+        "loss": 0.297305,
+        "f1": 0.932621,
+        "precision": 0.937813,
+        "recall": 0.929569,
+        "accuracy": 0.933541
+    },
+    {
+        "epoch": 8,
+        "loss": 0.26091,
+        "f1": 0.936718,
+        "precision": 0.941302,
+        "recall": 0.934428,
+        "accuracy": 0.937695
+    },
+    {
+        "epoch": 9,
+        "loss": 0.257095,
+        "f1": 0.936287,
+        "precision": 0.940804,
+        "recall": 0.933278,
+        "accuracy": 0.937695
+    },
+    {
+        "epoch": 10,
+        "loss": 0.242198,
+        "f1": 0.947706,
+        "precision": 0.951388,
+        "recall": 0.945102,
+        "accuracy": 0.948079
+    },
+    {
+        "epoch": 11,
+        "loss": 0.247509,
+        "f1": 0.95206,
+        "precision": 0.95716,
+        "recall": 0.948508,
+        "accuracy": 0.952233
+    },
+    {
+        "epoch": 12,
+        "loss": 0.229194,
+        "f1": 0.946783,
+        "precision": 0.949717,
+        "recall": 0.94458,
+        "accuracy": 0.94704
+    },
+    {
+        "epoch": 13,
+        "loss": 0.232511,
+        "f1": 0.955626,
+        "precision": 0.961156,
+        "recall": 0.951834,
+        "accuracy": 0.955348
+    },
+    {
+        "epoch": 14,
+        "loss": 0.218982,
+        "f1": 0.927556,
+        "precision": 0.930366,
+        "recall": 0.932944,
+        "accuracy": 0.928349
+    },
+    {
+        "epoch": 15,
+        "loss": 0.208841,
+        "f1": 0.944934,
+        "precision": 0.94373,
+        "recall": 0.9474,
+        "accuracy": 0.946002
+    }
+]

@@ -1,0 +1,244 @@
+NeuroScan AI v2.0 — Advanced Brain Tumor Detection System
+==========================================================
+
+NeuroScan AI is a state-of-the-art medical imaging application designed to 
+assist radiologists and neurologists in detecting and classifying brain 
+tumors from MRI scans with high accuracy, explainability, and uncertainty 
+quantification.
+
+1. TECHNOLOGY STACK
+-------------------
+- Frontend: React 18, Vite, Tailwind CSS, Framer Motion (animations), Lucide Icons.
+- Backend: FastAPI (Python 3.10+), SQLAlchemy (Async), SQLite/PostgreSQL.
+- AI/ML/DL: PyTorch, Torchvision, OpenCV, Scikit-learn.
+- Deployment: Uvicorn (ASGI server), GZip compression, JWT authentication.
+
+2. KEY FEATURES
+---------------
+- AI Tumor Detection: Binary classification (Tumor / No Tumor).
+- Tumor Classification: Multi-class (Glioma, Meningioma, Pituitary Adenoma).
+- Heatmap Explainability: Grad-CAM++, Score-CAM, and EigenCAM overlays.
+- Bayesian Uncertainty: MC Dropout quantification (std dev) and Shannon Entropy.
+- Test-Time Augmentation (TTA): 3-view averaged inference for reliability.
+- Clinical Reports: Automated PDF generation with clinical staging & WHO grades.
+- Scan History: Paginated database of past scans with doctor feedback system.
+- Analytics Dashboard: Personal and platform-wide statistics with charts.
+- Admin Panel: User management, role promotion/deletion, and platform stats.
+- Professional UI: Dark-mode landing page, mobile-responsive dashboard.
+
+3. AI / MACHINE LEARNING ARCHITECTURE
+-------------------------------------
+- Backbone Models: 
+    - EfficientNet-B4: Primary high-accuracy model (19.3M params).
+    - ResNet101: Fallback/Ensemble model (44.5M params).
+- Advanced Preprocessing:
+    - CLAHE: Contrast enhancement in LAB space (highlights tumor edges).
+    - Skull Strip Simulation: Removes non-brain tissue to reduce bone noise.
+    - Gaussian Denoising: Filters Rician noise common in MRI.
+- Inference Pipeline (v2):
+    - TTA: 3 augmented views (original, flip, brightness) averaged.
+    - MC Dropout: 10 stochastic forward passes to measure "model doubt".
+    - Temperature Scaling (T=1.3): Probability calibration to reduce overconfidence.
+- Explainability (XAI):
+    - Grad-CAM++: Gradient-weighted activation mapping.
+    - Score-CAM: Perturbation-based, gradient-free mapping (most faithful).
+    - EigenCAM: PCA-based mapping for ultra-fast localisation.
+
+4. TRAINING PIPELINE (train.py)
+-------------------------------
+- Loss Functions:
+    - Focal Loss: Focuses on hard/misclassified examples (imbalance handling).
+    - Label Smoothing: Prevents overconfidence during training.
+- Augmentations: MixUp, CutMix, RandomPerspective, and GaussianBlur.
+- Scheduler: OneCycleLR (Warm-up + Cosine Annealing).
+- Optimization: AdamW with Differential Learning Rates (Backbone 10x slower).
+- Sampling: Class-weighted WeightedRandomSampler for imbalanced datasets.
+
+5. CLINICAL RISK ANALYSIS
+-------------------------
+- Graded Severity: Critical (Red) -> High -> Moderate -> Low -> None (Green).
+- WHO Staging: Integrated clinical notes for WHO Grade I-IV lesions.
+- Confidence Weighting: Automatically upgrades risk if model is uncertain.
+- Urgency Levels: Routine, Semi-Urgent, Urgent, and Immediate categories.
+
+6. DIRECTORY STRUCTURE
+----------------------
+- /backend
+    - /models: ResNet and EfficientNet-B4 model definitions.
+    - /routes: API endpoints (predict, auth, history, analytics, users).
+    - /services: Core logic (predictor, gradcam, preprocessing, reports).
+    - train.py: The complete training command-line utility.
+    - setup_dataset.py: Organises Kaggle MRI data into train/val folders.
+- /frontend
+    - /src/pages: Landing, Dashboard, History, Analytics, Profile, Admin.
+    - /src/components: Navbar, ResultsPanel, AuthContext, ProtectedRoute.
+    - /src/services: API client for backend communication.
+- start_project.ps1: One-click setup script for Windows.
+
+7. SETUP & USAGE
+----------------
+1. Run `.\start_project.ps1` to install dependencies and start servers.
+2. Visit http://localhost:3000 to see the Landing Page.
+3. Register/Login to access the Dashboard.
+4. Upload an MRI (JPEG/PNG) to receive AI analysis + Heatmaps.
+5. To Train: 
+   - Download "Brain Tumor MRI Dataset" from Kaggle (Masoud Nickparvar).
+   - Use `python setup_dataset.py --src <raw_path>` then `python train.py`.
+
+8. DISCLAIMER
+-------------
+NeuroScan AI is a decision-support tool. All results must be confirmed by 
+a qualified medical professional. It is not intended for autonomous 
+clinical diagnosis.
+
+(c) 2026 NeuroScan AI Team — Advanced Brain Tumor Detection Project.
+
+9. TECHNICAL QUESTIONS & ANSWERS (Q&A)
+--------------------------------------
+
+Q1: Why was EfficientNet-B4 chosen over ResNet101 or VGG19?
+A1: EfficientNet uses "Compound Scaling" which scales depth, width, and resolution 
+    simultaneously. EfficientNet-B4 achieves higher ImageNet accuracy (84.0%) 
+    than ResNet101 (77.4%) while having 2.3x fewer parameters. This leads to 
+    faster inference, better generalisation, and a reduced memory footprint.
+
+Q2: What is the benefit of using CLAHE preprocessing on MRI scans?
+A2: Contrast-Limited Adaptive Histogram Equalisation (CLAHE) enhances local 
+    contrast within an image. In MRI, tumor regions often exhibit subtle intensity 
+    gradients. CLAHE boosts these without over-amplifying the white-noise common 
+    in T1/T2 marrow — improving the model's ability to detect tumor boundaries.
+
+Q3: Why use both Grad-CAM++ and Score-CAM?
+A3: Grad-CAM++ is gradient-based and fast, but can be noisy or "unfaithful" in 
+    deep networks. Score-CAM is gradient-free and uses channel perturbations to 
+    score activation maps. It is far more faithful to the actual decision-making 
+    process of the CNN, although it is computationally more intensive.
+
+Q4: What is MC Dropout, and how does it quantify uncertainty?
+A4: Monte Carlo (MC) Dropout treats Dropout as a Bayesian approximation. By 
+    leaving Dropout enabled at inference time (usually it's disabled), we get 
+    stochastic results. By running 10 forward passes, we can compute the standard 
+    deviation (uncertainty). High std dev means the model has "doubt" about its 
+    own classification.
+
+Q5: Why is TTA (Test-Time Augmentation) integrated into the inference pipeline?
+A5: TTA averages predictions from different views (original, flip, brightness). 
+    If a tumor is only visible from a certain "angle" or lighting, the average 
+    is far more stable and accurate than a single-pass prediction.
+
+Q6: How does the system handle class imbalance during training?
+A6: We use three methods: (1) WeightedRandomSampler to over-sample minority 
+    tumor types, (2) Focal Loss to focus on hard/misclassified samples, and 
+    (3) Class-weighted BCE/Cross-Entropy during the backpropagation step.
+
+Q7: What is the purpose of Temperature Scaling (T=1.3)?
+A7: Deep neural networks are known to be "overconfident" even when wrong. 
+    Temperature Scaling calibers the output logits, softening the probability 
+    distribution to more accurately match the model's true empirical accuracy.
+
+Q8: Why is "Shannon Entropy" used as an additional metric?
+A8: Entropy measures the "disorder" or flatness of the probability distribution. 
+    If probabilities are [0.5, 0.5], entropy is high. If [0.99, 0.01], entropy 
+    is low. It's a key indicator of whether the model is "confused" between 
+    multiple tumor types.
+
+Q9: What is the significance of "Skull Stripping"?
+A9: Skull stripping removes non-brain tissue (scalp, skull, eyes) from the 
+    image. These regions contain redundant high-contrast features that can 
+    mislead the AI. Removing them focuses the CNN purely on the parenchyma 
+    where tumors actually occur.
+
+Q10: Why use OneCycleLR instead of standard StepLR?
+A10: OneCycleLR starts with a low LR, warms up to a peak, then decays with a 
+     cosine curve. This "super-convergence" helps find wider minima in the loss 
+     landscape, leading to better generalisation on unseen MRI data.
+
+Q11: Why is Async FastAPI better than standard Django or Flask for this?
+A11: AI models are CPU/GPU-bound operations. Async FastAPI allows the server 
+     to handle thousands of concurrent metadata requests (history, analytics) 
+     without blocking, while the GPU workers process the image analysis in 
+     the background.
+
+Q12: Is the system compatible with multi-GPU setups?
+A12: Yes. The training script uses PyTorch's `device = 'cuda'` logic. If 
+     `DataParallel` or `DistributedDataParallel` is added (not currently 
+     implied in v2.0 but easy to extend), it will scale across all available cards.
+
+
+10. WORKFLOW QUESTIONS & ANSWERS (Operational Flow)
+---------------------------------------------------
+
+Q1: What happens exactly when I click 'Upload MRI'?
+A1: (1) The image is sent to the FastAPI server. (2) Preprocessing (CLAHE + Skull 
+    Strip) is applied. (3) 3 TTA views are generated. (4) 11 forward passes (1 TTA 
+    + 10 MC Dropout) are run. (5) Explainability maps (CAMs) are generated. (6) 
+    Result is saved to the SQLite history and returned to the UI.
+
+Q2: How does the Feedback Loop improve the system?
+A2: Doctors can 'Confirm' or 'Reject' an AI prediction. This feedback is stored 
+    with the `ScanRecord`. This ground-truth data can be used for "Active Learning" 
+    in future versions to retrain the model on the edge cases it failed.
+
+Q3: How is the Analytics Dashboard populated?
+A3: The backend runs SQL aggregations (Count, Avg, Group By) on the `ScanRecord` 
+    table. It calculates the detection rate, average confidence, and weekly 
+    activity trends which the frontend renders as animated charts.
+
+Q4: What is the workflow for generating a Clinical PDF?
+A4: The frontend sends the structured prediction result to `/predict/report`. 
+    The `report_generator.py` uses `fpdf2` to create a paginated PDF with 
+    the MRI image, the Grad-CAM heatmap, clinical staging notes, and a 
+    physician's sign-off section.
+
+Q5: How does an Admin manage users?
+A5: Admins access the `/admin` panel. They can view a searchable table of all 
+    registered users, promote regular users to 'Admin' status (allowing them 
+    to see platform-wide stats), or delete accounts to clean up data.
+
+
+11. MAJOR INNOVATIONS (NeuroScan v2.0)
+--------------------------------------
+
+1. Bayesian "Model Doubt" Quantification: Unlike standard AI that "guesses," 
+   NeuroScan uses MC Dropout to measure its own uncertainty. If it doesn't 
+   know, it admits it.
+
+2. Ensemble Feature Fusion: By combining the global features of ResNet101 with 
+   the inverted-residual efficiencies of EfficientNet-B4, we achieve a more 
+   robust classification that resists over-fitting.
+
+3. Triple-Method Explainability: We don't just show one heatmap. We allow 
+   radiologists to toggle between Grad-CAM++, Score-CAM, and EigenCAM to 
+   verify tumor localization from multiple mathematical perspectives.
+
+4. Contrast-Preserving Preprocessing: Our CLAHE-based pipeline is specifically 
+   tuned for the 12-bit dynamic range of medical DICOM/MRI images, preserving 
+   pathological details that standard AI resizing often destroys.
+
+
+12. COMPLETE FEATURE LIST (Categorized)
+---------------------------------------
+
+[ AI / ANALYTICS ]
+- Multi-Class Tumor Detection (Glioma, Meningioma, Pituitary).
+- Test-Time Augmentation (TTA) for stable inference.
+- Shannon Entropy & MC Dropout uncertainty metrics.
+- Platform-wide admin statistics & personal scan history.
+
+[ RADIOLOGY TOOLS ]
+- Dual-mode Heatmap (Grad-CAM++ / Score-CAM).
+- Heatmap Intensity Overlay Slider.
+- "Original vs. Analysis" side-by-side comparison strip.
+- Automatic WHO Staging & Clinical Recommendations.
+
+[ USER / RECORD MANAGEMENT ]
+- Patient/Scan history with pagination and filtering.
+- Clinical PDF Report download for every scan.
+- Doctor Validation/Feedback system.
+- Secure JWT Authentication & Password management.
+
+[ UI / UX ]
+- Modern Dark-Mode Landing Page with Framer Motion.
+- Responsive Dashboard (Works on Tablets/Laptops).
+- Real-time Toast Notifications for all actions.
+- Animated Confidence & Uncertainty Gauges.

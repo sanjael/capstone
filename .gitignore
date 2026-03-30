@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+
+# Dataset
+backend/dataset/
+backend/dataset.zip
+Training/
+Testing/
+
+# Model weights (Now explicitly tracked by Git LFS)
+
+# Environment
+backend/.env
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Debug scripts
+backend/check_*.py
+
+# Cache
+backend/models/__pycache__/
+backend/routes/__pycache__/
+backend/services/__pycache__/
+backend/__pycache__/
